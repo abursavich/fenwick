@@ -1,4 +1,4 @@
-fenwick [![GoDoc](https://godoc.org/github.com/abursavich/fenwick?status.svg)](https://godoc.org/github.com/abursavich/fenwick)
+fenwick [![GoDoc](https://godoc.org/github.com/abursavich/fenwick?status.svg)](https://godoc.org/github.com/abursavich/fenwick) [![Build Status](https://travis-ci.org/abursavich/fenwick.svg?branch=master)](https://travis-ci.org/abursavich/fenwick)
 ====
 
 Package fenwick provides an implementation of a Fenwick Tree or Binary Indexed Tree which provides efficient manipulation and calculation of prefix sums of a table of values.
