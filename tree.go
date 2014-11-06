@@ -26,7 +26,7 @@ func NewTree(min, max int) *Tree {
 }
 
 // Add adds delta to index i.
-func (t *Tree) Add(i int, delta int) {
+func (t *Tree) Add(i, delta int) {
 	// convert the index to be one-based for lookup math.
 	i = i - t.m + 1
 	// increment every node on the path from the target to the root where
@@ -38,8 +38,8 @@ func (t *Tree) Add(i int, delta int) {
 	}
 }
 
-// PrefixSum returns the sum of values at indices inclusively up to i.
-func (t *Tree) PrefixSum(i int) int {
+// Prefix returns the sum of values in the inclusive range [min, i].
+func (t *Tree) Prefix(i int) int {
 	// convert the index to be one-based for lookup math.
 	if i = i - t.m + 1; i > len(t.n) {
 		i = len(t.n) // truncate to maximum range.
@@ -55,14 +55,21 @@ func (t *Tree) PrefixSum(i int) int {
 	return n
 }
 
-// RangeSum returns the sum of values in the inclusive range [i, k].
-func (t *Tree) RangeSum(i, k int) int {
-	return t.PrefixSum(k) - t.PrefixSum(i-1)
+// Range returns the sum of values in the inclusive range [i, k].
+func (t *Tree) Range(i, k int) int {
+	return t.Prefix(k) - t.Prefix(i-1)
 }
 
 // Value returns the value at index i.
 func (t *Tree) Value(i int) int {
-	return t.RangeSum(i, i)
+	return t.Range(i, i)
+}
+
+// Set sets the value v at index i.
+func (t *Tree) Set(i, v int) {
+	if vi := t.Value(i); vi != v {
+		t.Add(i, v-vi)
+	}
 }
 
 // Min returns the minimum index in the range.
