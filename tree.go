@@ -37,26 +37,26 @@ func (t *Tree) Add(i, delta int) {
 	}
 }
 
-// Prefix returns the sum of values in the inclusive range [min, i].
-func (t *Tree) Prefix(i int) int {
+// Prefix returns the sum of values in the inclusive range [min, hi].
+func (t *Tree) Prefix(hi int) int {
 	// convert the index to be one-based for lookup math.
-	if i = i - t.m + 1; i > len(t.n) {
-		i = len(t.n) // truncate to maximum range.
+	if hi = hi - t.m + 1; hi > len(t.n) {
+		hi = len(t.n) // truncate to maximum range.
 	}
 	// accumulate every node on the path from the target to the root where
 	// the index of the node is greater than or equal to the target node.
 	// in other words, accumulate the given node and every parent on its path
 	// to the root where the child is on the right of the parent.
 	n := 0
-	for ; i > 0; i = i ^ lsb(i) {
-		n += t.n[i-1] // correct for the difference in indices
+	for ; hi > 0; hi = hi ^ lsb(hi) {
+		n += t.n[hi-1] // correct for the difference in indices
 	}
 	return n
 }
 
-// Range returns the sum of values in the inclusive range [i, k].
-func (t *Tree) Range(i, k int) int {
-	return t.Prefix(k) - t.Prefix(i-1)
+// Range returns the sum of values in the inclusive range [lo, hi].
+func (t *Tree) Range(lo, hi int) int {
+	return t.Prefix(hi) - t.Prefix(lo-1)
 }
 
 // Value returns the value at index i.
