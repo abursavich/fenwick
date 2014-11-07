@@ -2,17 +2,21 @@
 // Use of this source code is governed by The MIT License
 // which can be found in the LICENSE file.
 
-package fenwick
+package fenwick_test
 
 import (
+	"fmt"
 	"math/rand"
+	"sort"
 	"testing"
 	"testing/quick"
+
+	"github.com/abursavich/fenwick"
 )
 
 func TestBasic(tt *testing.T) {
 	min, max := 0, 32
-	t := NewTree(min, max)
+	t := fenwick.NewTree(min, max)
 	for i := min; i <= max; i++ {
 		t.Add(i, 1)
 	}
@@ -41,7 +45,7 @@ func TestBasic(tt *testing.T) {
 // operations upon which all others are contructed.
 func TestPrimitiveFuzz(tt *testing.T) {
 	tree := func(d []int) []int {
-		t := NewTree(0, len(d)-1)
+		t := fenwick.NewTree(0, len(d)-1)
 		for i, v := range d {
 			t.Add(i, v)
 		}
@@ -79,7 +83,7 @@ func TestRangeFuzz(tt *testing.T) {
 		return k, j
 	}
 	tree := func(d []int, k, j int) int {
-		t := NewTree(0, len(d)-1)
+		t := fenwick.NewTree(0, len(d)-1)
 		for i, v := range d {
 			t.Add(i, v)
 		}
@@ -102,7 +106,7 @@ func TestRangeFuzz(tt *testing.T) {
 
 func TestValueFuzz(tt *testing.T) {
 	fn := func(d []int) bool {
-		t := NewTree(0, len(d)-1)
+		t := fenwick.NewTree(0, len(d)-1)
 		for i, v := range d {
 			t.Add(i, v)
 		}
@@ -120,7 +124,7 @@ func TestValueFuzz(tt *testing.T) {
 
 func TestSetFuzz(tt *testing.T) {
 	fn := func(d []int) bool {
-		t := NewTree(0, len(d)-1)
+		t := fenwick.NewTree(0, len(d)-1)
 		for i, v := range d {
 			t.Add(i, rand.Int())
 			t.Set(i, v)
@@ -136,3 +140,55 @@ func TestSetFuzz(tt *testing.T) {
 		tt.Error(err)
 	}
 }
+
+// An example solution to the HackerRank Triplets challenge.
+func ExampleTree() {
+	// https://www.hackerrank.com/challenges/triplets
+	//
+	// There is an integer array d which does not contain
+	// more than two elements of the same value. How many
+	// distinct ascending triplets
+	// (d[i] < d[j] < d[k], i < j < k) are present?
+	n := readInt()
+	d := make([]int, n)
+	for i := range d {
+		d[i] = readInt()
+	}
+	// Compress the range of the table while preserving
+	// ordering by mapping all values into the range [0,k)
+	// where k is the number of unique values in d.
+	p := make(map[int][]int, n/2)
+	u := make([]int, 0, n/2)
+	for i, v := range d { // O(n)
+		pv, ok := p[v]
+		if !ok {
+			u = append(u, v)
+		}
+		p[v] = append(pv, i)
+	}
+	sort.Ints(u)          // O(k*log(k))
+	for i, v := range u { // O(n)
+		for _, j := range p[v] {
+			d[j] = i
+		}
+	}
+	// Make a single pass over the values from left to right.
+	// Use one Tree to track which values have been seen.
+	// Use a second Tree to track how many seen values make a
+	// valid pair with the current value. Use a third Tree to
+	// determine how many pairs make a valid triplet with the
+	// current value.
+	k := len(u) - 1
+	seen := fenwick.NewTree(0, k)
+	pair := fenwick.NewTree(0, k)
+	trip := fenwick.NewTree(0, k)
+	for _, v := range d { // O(n*log(k))
+		seen.Set(v, 1)
+		pair.Set(v, seen.Prefix(v-1))
+		trip.Set(v, pair.Prefix(v-1))
+	}
+	// Finally, print the sum of all triplet counts.
+	fmt.Println(trip.Prefix(k)) // O(log(k))
+}
+
+func readInt() int { return 0 }
