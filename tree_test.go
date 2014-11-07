@@ -174,10 +174,11 @@ func ExampleTree() {
 	}
 	// Make a single pass over the values from left to right.
 	// Use one Tree to track which values have been seen.
-	// Use a second Tree to track how many seen values make a
-	// valid pair with the current value. Use a third Tree to
-	// determine how many pairs make a valid triplet with the
-	// current value.
+	// Use a second Tree to track the number of valid pairs by
+	// querying the first Tree for seen values less than the
+	// current value. Use a third Tree to track the number of
+	// valid triples by querying the second Tree for pairs of
+	// values lower than the current value.
 	k := len(u) - 1
 	seen := fenwick.NewTree(0, k)
 	pair := fenwick.NewTree(0, k)
@@ -187,7 +188,7 @@ func ExampleTree() {
 		pair.Set(v, seen.Prefix(v-1))
 		trip.Set(v, pair.Prefix(v-1))
 	}
-	// Finally, print the sum of all triplet counts.
+	// Print the sum of all triplet counts.
 	fmt.Println(trip.Prefix(k)) // O(log(k))
 }
 

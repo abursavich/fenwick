@@ -92,7 +92,9 @@ fmt.Println(tree.Range(7, 10)) // 107
 ```
 
 ### [HackerRank Triplets Challenge](https://www.hackerrank.com/challenges/triplets)
-There is an integer array d which does not contain more than two elements of the same value. How many distinct ascending triples (d[i] < d[j] < d[k], i < j < k) are present?
+There is an integer array d which does not contain more than
+two elements of the same value. How many distinct ascending
+triplets (d[i] < d[j] < d[k], i < j < k) are present?
 ```go
 func Triplets(d []int) int {
 	// Compress the range of the table while preserving
@@ -116,10 +118,11 @@ func Triplets(d []int) int {
 	}
 	// Make a single pass over the values from left to right.
 	// Use one Tree to track which values have been seen.
-	// Use a second Tree to track how many seen values make a
-	// valid pair with the current value. Use a third Tree to
-	// determine how many pairs make a valid triplet with the
-	// current value.
+	// Use a second Tree to track the number of valid pairs by
+	// querying the first Tree for seen values less than the
+	// current value. Use a third Tree to track the number of
+	// valid triples by querying the second Tree for pairs of
+	// values lower than the current value.
 	k := len(u) - 1
 	seen := fenwick.NewTree(0, k)
 	pair := fenwick.NewTree(0, k)
