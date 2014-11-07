@@ -3,15 +3,14 @@
 // which can be found in the LICENSE file.
 
 // Package fenwick provides an implementation of a Fenwick Tree
-// or Binary Indexed Tree.
+// or Binary Indexed Tree which provides efficient manipulation
+// and calculation of prefix sums on a table of values.
 package fenwick
 
-// Tree represents a Fenwick Tree or Binary Indexed Tree
-// which provides efficient manipulation and calculation
-// of prefix sums of a table of values.
+// Tree represents a Fenwick Tree or Binary Indexed Tree.
 //
 // Where n is the size of the table, it requires O(n) space
-// and operations take O(log n) time.
+// and operations take O(log(n)) time.
 type Tree struct {
 	n []int
 	m int
