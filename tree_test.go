@@ -177,8 +177,8 @@ func ExampleTree() {
 	// Use a second Tree to track the number of valid pairs by
 	// querying the first Tree for seen values less than the
 	// current value. Use a third Tree to track the number of
-	// valid triples by querying the second Tree for pairs of
-	// values lower than the current value.
+	// valid triplets by querying the second Tree for pairs of
+	// values less than the current value.
 	k := len(u) - 1
 	seen := fenwick.NewTree(0, k)
 	pair := fenwick.NewTree(0, k)

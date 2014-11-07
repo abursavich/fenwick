@@ -96,9 +96,11 @@ There is an integer array d which does not contain more than
 two elements of the same value. How many distinct ascending
 triplets (d[i] < d[j] < d[k], i < j < k) are present?
 ```go
-func Triplets(d []int) int {
+// Triplets returns the number of unique ascending triplets in d.
+// If preserve is false it may save space by mutating d.
+func Triplets(d []int, preserve bool) int {
 	// Compress the range of the table while preserving
-	// ordering by mapping all values into the range [0,k)
+	// ordering by mapping all values into the range [1,k]
 	// where k is the number of unique values in d.
 	n := len(d)
 	p := make(map[int][]int, n/2)
@@ -110,10 +112,13 @@ func Triplets(d []int) int {
 		}
 		p[v] = append(pv, i)
 	}
-	sort.Ints(u)          // O(k*log(k))
+	sort.Ints(u) // O(k*log(k))
+	if preserve {
+		d = make([]int, n)
+	}
 	for i, v := range u { // O(n)
 		for _, j := range p[v] {
-			d[j] = i
+			d[j] = i + 1
 		}
 	}
 	// Make a single pass over the values from left to right.
@@ -121,12 +126,12 @@ func Triplets(d []int) int {
 	// Use a second Tree to track the number of valid pairs by
 	// querying the first Tree for seen values less than the
 	// current value. Use a third Tree to track the number of
-	// valid triples by querying the second Tree for pairs of
-	// values lower than the current value.
-	k := len(u) - 1
-	seen := fenwick.NewTree(0, k)
-	pair := fenwick.NewTree(0, k)
-	trip := fenwick.NewTree(0, k)
+	// valid triplets by querying the second Tree for pairs of
+	// values less than the current value.
+	k := len(u)
+	seen := fenwick.NewTree(1, k)
+	pair := fenwick.NewTree(1, k)
+	trip := fenwick.NewTree(1, k)
 	for _, v := range d { // O(n*log(k))
 		seen.Set(v, 1)
 		pair.Set(v, seen.Prefix(v-1))
